@@ -16,44 +16,75 @@ class App extends Component {
   }
 
   componentDidMount() {
-    // You will want to do some fetching!
+    fetch("https://still-garden-88285.herokuapp.com/draft_tweets")
+      .then(res => res.json())
+      .then(
+        (result) => {
+          this.setState({
+            isLoaded: true,
+            tweets: result.draft_tweets
+          })
+        },
+        (error) => {
+          this.setState({
+            isLoaded: true,
+            error: error
+          })
+        }
+      )
   }
 
   handleSubmit(newText) {
-    // this.setState({isLoaded: false});
+    this.setState({isLoaded: false});
 
     // Static UI :(
+    // let newTweet = {
+    //   id: this.state.tweets.length + 1,
+    //   user_name: 'Yvone',
+    //   avatar: 'https://img.ifcdn.com/images/d3951bf44788590b80f69c0c65718f7a23eb33c645cb677ee335f81a6e785ee6_3.jpg',
+    //   created_at: '11-03-2019',
+    //   description: newText
+    // };
+
+    // let tweets = this.state.tweets.slice();
+
+    // this.setState({ tweets: tweets.concat(newTweet) });
+
+    // Dynamic UI !
     let newTweet = {
-      id: this.state.tweets.length + 1,
       user_name: 'Yvone',
       avatar: 'https://img.ifcdn.com/images/d3951bf44788590b80f69c0c65718f7a23eb33c645cb677ee335f81a6e785ee6_3.jpg',
-      created_at: '11-03-2019',
       description: newText
     };
 
-    let tweets = this.state.tweets.slice();
-
-    this.setState({ tweets: tweets.concat(newTweet) });
-
-    // Dynamic UI !
-    // we will need to build some Data to send
-    // let newTweet = {
-    // };
-
-    // And some options too
     let headers = {};
     headers['Content-Type'] = 'application/json';
 
     const options = {
       headers: headers,
-      method: 'POST'
-      // body: JSON.stringify(newTweet) such a nice place to send Data
+      method: 'POST',
+      // credentials: 'include',
+      body: JSON.stringify(newTweet)
     };
 
-    // how about some more fetching here? YEAH!
-    // Don't forget to tell the state, data isLoaded!
-    // this.setState({isLoaded: true});
-    
+    fetch("https://still-garden-88285.herokuapp.com/draft_tweets", options)
+      .then(res => res.json())
+      .then(
+        (result) => {
+          let newTweets = this.state.tweets.slice();
+
+          this.setState({
+            isLoaded: true,
+            tweets: newTweets.concat(result.draft_tweet)
+          });
+        },
+        (error) => {
+          this.setState({
+            isLoaded: true,
+            error
+          });
+        }
+      )
   }
 
   render() {

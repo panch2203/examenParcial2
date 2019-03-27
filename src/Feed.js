@@ -15,9 +15,7 @@ class Feed extends Component {
     return(
       <ul className="feed">
         {/* CONDITIONAL RENDERING */}
-        {!this.props.isLoaded && <div className="dummy-tweet row">
-          Loading...
-        </div>}
+        {!this.props.isLoaded && <EmptyState />}
 
         {
           this.props.tweets.map((tweet) => (
