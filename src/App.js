@@ -2,6 +2,10 @@ import React, { Component, Fragment } from 'react';
 import './App.css';
 import TweetBox from './TweetBox';
 import Feed from './Feed';
+import axios from 'axios';
+
+const API = 'https://still-garden-88285.herokuapp.com/draft_tweets';
+const DEFAULT_QUERY = 'redux';
 
 class App extends Component {
   constructor(props){
@@ -15,17 +19,18 @@ class App extends Component {
     this.handleSubmit = this.handleSubmit.bind(this);
   }
 
+
   componentDidMount() {
-    fetch("https://still-garden-88285.herokuapp.com/draft_tweets")
-      .then(res => res.json())
+    axios.get(API)
       .then(
-        (result) => {
+        result => {
+          console.log(result.data);
           this.setState({
             isLoaded: true,
-            tweets: result.draft_tweets
+            tweets: result.data.draft_tweets 
           })
-        },
-        (error) => {
+        })
+        .catch(error => {
           this.setState({
             isLoaded: true,
             error: error
@@ -57,31 +62,20 @@ class App extends Component {
       description: newText
     };
 
-    let headers = {};
-    headers['Content-Type'] = 'application/json';
-
-    const options = {
-      headers: headers,
-      method: 'POST',
-      // credentials: 'include',
-      body: JSON.stringify(newTweet)
-    };
-
-    fetch("https://still-garden-88285.herokuapp.com/draft_tweets", options)
-      .then(res => res.json())
+    axios.post("https://still-garden-88285.herokuapp.com/draft_tweets", newTweet)
       .then(
         (result) => {
           let newTweets = this.state.tweets.slice();
 
           this.setState({
             isLoaded: true,
-            tweets: newTweets.concat(result.draft_tweet)
+            tweets: newTweets.concat(result.data.draft_tweet)
           });
-        },
-        (error) => {
+        })
+        .catch(error => {
           this.setState({
             isLoaded: true,
-            error
+            error: error
           });
         }
       )
